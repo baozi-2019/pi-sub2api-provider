@@ -37,12 +37,14 @@ pi update --extensions                             # 更新扩展并核对锁定
 
 ## 使用
 
-只需**一次登录**：`/login sub2api` 会依次询问 **base URL** 与 **API Key**，两者一起存入 pi 的 `auth.json`（Key 作为凭证、URL 存在凭证的 env 里）。
+只需**一次登录**：`/login`（在列表里手动选 **Sub2API**，或直接 `/login sub2api`）会依次询问 **base URL** 与 **API Key**，两者一起存入 pi 的 `auth.json`（Key 作为凭证、URL 存在凭证的 env 里）。登出用 `/logout` 选 Sub2API。
 
 ```text
-/login sub2api     # 录入 Sub2API 地址 + API Key（一次完成）
+/login             # 列表里选 Sub2API（或 /login sub2api 直连）
+                   #   → 依次输入 base URL 和 API Key
 /sub2api-refresh   # 重新拉取 /v1/models + models.dev，热更新
 /sub2api-status    # 查看脱敏状态（URL / Key / 模型数 / 最近错误）
+/logout            # 列表里选 Sub2API 登出（移除存储的凭证）
 ```
 
 也支持环境变量（免交互，适合 CI 或终端环境）：`SUB2API_BASE_URL` + `SUB2API_API_KEY`。
