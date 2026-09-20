@@ -19,11 +19,11 @@ declare module "@earendil-works/pi-ai" {
     cacheWrite: number
   }
 
-  /** Full `Model<"openai-completions">` view required by `createProvider`. */
+  /** Full `Model<"openai-responses">` view required by `createProvider`. */
   export interface Sub2apiModel {
     id: string
     name: string
-    api: "openai-completions"
+    api: "openai-responses"
     provider: string
     baseUrl: string
     reasoning: boolean
@@ -103,8 +103,8 @@ declare module "@earendil-works/pi-ai" {
 
   export function createProvider(input: CreateProviderOptions): Provider
 
-  /** Runtime root alias (see AGENTS.md): openAICompletionsApi lives on the compat entrypoint. */
-  export function openAICompletionsApi(): ProviderStreams
+  /** Runtime root alias (see AGENTS.md): openAIResponsesApi lives on the compat entrypoint. */
+  export function openAIResponsesApi(): ProviderStreams
 }
 
 declare module "@earendil-works/pi-coding-agent" {
@@ -126,7 +126,11 @@ declare module "@earendil-works/pi-coding-agent" {
       getProviderAuth(
         provider: string,
       ): Promise<
-        | ({ auth: { apiKey?: string; baseUrl?: string }; env?: Record<string, string>; source?: string })
+        | {
+            auth: { apiKey?: string; baseUrl?: string }
+            env?: Record<string, string>
+            source?: string
+          }
         | undefined
       >
     }

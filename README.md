@@ -54,6 +54,7 @@ pi update --extensions                             # 更新扩展并核对锁定
 ## 实现说明
 
 - 动态模型目录走 pi 原生 `createProvider({ fetchModels })`，刷新由 `ctx.modelRegistry.refresh({ providers: ["sub2api"], force: true })` 触发。
+- 请求走 OpenAI **Responses** API（`api: "openai-responses"`，即 `POST {baseUrl}/responses`），与 Codex 的 `wire_api = "responses"` 一致；不走 `/chat/completions`。
 - **URL 与 Key 绑定在同一个凭证**：`/login sub2api` 用 `interaction.prompt` 依次取 URL（`text`）与 Key（`secret`），返回 `{ type: "api_key", key, env: { SUB2API_BASE_URL } }`；`resolve()` 把 URL 作为 `auth.baseUrl` 返回，pi 每个请求都用它覆盖 `model.baseUrl`（`applyAuth`），因此改 URL 只需重新 `/login`。
 - 插件不再有独立配置文件；`/sub2api-status` 通过 `modelRegistry.getProviderAuth("sub2api")` 读取脱敏后的 URL 与 Key 状态。
 - 入口 `index.ts` 持有全部 peer 包 import（从 `@earendil-works/pi-ai` **根路径**导入，运行时被 alias 到 compat 入口），其用到的主机导出由 `types/peer-shims.d.ts` 窄化声明，因此也纳入本地 typecheck；`src/` 为纯逻辑。

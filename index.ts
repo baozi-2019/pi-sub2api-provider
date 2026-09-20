@@ -12,7 +12,7 @@
  * types/peer-shims.d.ts. src/ stays peer-free.
  */
 
-import { createProvider, openAICompletionsApi, type Sub2apiModel } from "@earendil-works/pi-ai"
+import { createProvider, openAIResponsesApi, type Sub2apiModel } from "@earendil-works/pi-ai"
 import { getAgentDir, type ExtensionAPI } from "@earendil-works/pi-coding-agent"
 import { join } from "node:path"
 
@@ -111,7 +111,7 @@ export default function (pi: ExtensionAPI): void {
             ({
               id: def.id,
               name: def.name,
-              api: "openai-completions",
+              api: "openai-responses",
               provider: PROVIDER_ID,
               baseUrl,
               reasoning: def.reasoning,
@@ -125,7 +125,7 @@ export default function (pi: ExtensionAPI): void {
         lastError = undefined
         return models
       },
-      api: openAICompletionsApi(),
+      api: openAIResponsesApi(),
     })
   }
 
