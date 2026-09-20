@@ -1,0 +1,55 @@
+{
+  "name": "pi-sub2api-provider",
+  "version": "0.1.0",
+  "description": "pi extension that connects to a self-hosted Sub2API instance and imports its available models",
+  "type": "module",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "sub2api",
+    "provider"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baozi-2019/pi-sub2api-provider.git"
+  },
+  "files": [
+    "index.ts",
+    "src/",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "RELEASE.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "npm run typecheck && tsx tests/test-package-manifest.ts && tsx tests/test-config.ts && tsx tests/test-sub2api-models.ts && tsx tests/test-models-dev.ts && tsx tests/test-catalog.ts",
+    "typecheck": "tsc --noEmit",
+    "format:check": "prettier --check '**/*.{ts,json,md}'",
+    "format": "prettier --write '**/*.{ts,json,md}'"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "25.6.0",
+    "prettier": "^3.5.0",
+    "tsx": "4.22.4",
+    "typescript": "6.0.3"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-ai": {
+      "optional": true
+    },
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    }
+  }
+}
