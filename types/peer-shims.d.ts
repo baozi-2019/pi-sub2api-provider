@@ -123,9 +123,7 @@ declare module "@earendil-works/pi-coding-agent" {
       }): Promise<{ aborted: boolean; errors: ReadonlyMap<string, Error> }>
       getProvider(id: string): { getModels(): readonly unknown[] } | undefined
       getApiKeyForProvider(provider: string): Promise<string | undefined>
-      getProviderAuth(
-        provider: string,
-      ): Promise<
+      getProviderAuth(provider: string): Promise<
         | {
             auth: { apiKey?: string; baseUrl?: string }
             env?: Record<string, string>
