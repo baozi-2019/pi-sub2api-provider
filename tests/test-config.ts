@@ -1,15 +1,11 @@
 import assert from "node:assert/strict"
-import { mkdtemp, rm } from "node:fs/promises"
-import { tmpdir } from "node:os"
-import { join } from "node:path"
 import { describe, it } from "node:test"
 
 import {
-  loadConfig,
+  baseUrlFromEnv,
   modelsUrl,
   normalizeBaseUrl,
   redactDiagnosticText,
-  saveConfig,
 } from "../src/config.ts"
 
 describe("normalizeBaseUrl", () => {
@@ -26,6 +22,12 @@ describe("normalizeBaseUrl", () => {
     assert.equal(normalizeBaseUrl("127.0.0.1:8080"), "")
     assert.equal(normalizeBaseUrl(""), "")
   })
+
+  it("rejects URLs carrying credentials or query/hash", () => {
+    assert.equal(normalizeBaseUrl("https://user:pass@host"), "")
+    assert.equal(normalizeBaseUrl("https://host/?api_key=abc"), "")
+    assert.equal(normalizeBaseUrl("https://host/#frag"), "")
+  })
 })
 
 describe("modelsUrl", () => {
@@ -39,29 +41,18 @@ describe("modelsUrl", () => {
   })
 })
 
-describe("loadConfig / saveConfig", () => {
-  it("prefers the env override and falls back to the persisted file", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "sub2api-config-"))
-    const configPath = join(dir, "config.json")
-    try {
-      assert.equal(
-        loadConfig({ configPath, env: { SUB2API_BASE_URL: "http://env:1/" } })?.baseUrl,
-        "http://env:1",
-      )
-
-      saveConfig(configPath, { baseUrl: "http://file:2" })
-      assert.equal(loadConfig({ configPath, env: {} })?.baseUrl, "http://file:2")
-
-      // Malformed file => undefined, not a throw.
-      saveConfig(configPath, { baseUrl: "not-a-url" })
-      assert.equal(loadConfig({ configPath, env: {} }), undefined)
-    } finally {
-      await rm(dir, { recursive: true, force: true })
-    }
+describe("baseUrlFromEnv", () => {
+  it("reads and normalizes the credential env value", () => {
+    assert.equal(
+      baseUrlFromEnv({ SUB2API_BASE_URL: " http://127.0.0.1:8080/ " }),
+      "http://127.0.0.1:8080",
+    )
   })
 
-  it("returns undefined when nothing is configured", () => {
-    assert.equal(loadConfig({ configPath: "/nonexistent/sub2api-config.json", env: {} }), undefined)
+  it("fails closed on missing or invalid values", () => {
+    assert.equal(baseUrlFromEnv(undefined), "")
+    assert.equal(baseUrlFromEnv({}), "")
+    assert.equal(baseUrlFromEnv({ SUB2API_BASE_URL: "not-a-url" }), "")
   })
 })
 
@@ -75,5 +66,11 @@ describe("redactDiagnosticText", () => {
     assert.ok(!out.includes("sk-secretkey"))
     assert.ok(out.includes("[redacted]"))
     assert.ok(out.includes("http://host:1/v1/models"))
+  })
+
+  it("redacts bare sk- keys with dots and key= forms", () => {
+    const out = redactDiagnosticText("key=sk-abc.def and bare sk-xyz.123")
+    assert.ok(!out.includes("sk-abc.def"))
+    assert.ok(!out.includes("sk-xyz.123"))
   })
 })

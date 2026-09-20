@@ -45,16 +45,23 @@ declare module "@earendil-works/pi-ai" {
   export interface ApiKeyCredential {
     type: "api_key"
     key?: string
+    /** Provider-scoped config bag; carries SUB2API_BASE_URL for this provider. */
+    env?: Record<string, string>
   }
 
   export interface AuthResult {
-    auth: { apiKey?: string }
+    auth: { apiKey?: string; baseUrl?: string }
+    env?: Record<string, string>
     source?: string
   }
 
   export interface ProviderAuthInteraction {
     signal: AbortSignal
-    prompt(prompt: { type: "secret"; message: string; placeholder?: string }): Promise<string>
+    prompt(prompt: {
+      type: "secret" | "text"
+      message: string
+      placeholder?: string
+    }): Promise<string>
   }
 
   export interface StoredModelsEntry {
@@ -116,6 +123,12 @@ declare module "@earendil-works/pi-coding-agent" {
       }): Promise<{ aborted: boolean; errors: ReadonlyMap<string, Error> }>
       getProvider(id: string): { getModels(): readonly unknown[] } | undefined
       getApiKeyForProvider(provider: string): Promise<string | undefined>
+      getProviderAuth(
+        provider: string,
+      ): Promise<
+        | ({ auth: { apiKey?: string; baseUrl?: string }; env?: Record<string, string>; source?: string })
+        | undefined
+      >
     }
   }
 
