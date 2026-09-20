@@ -1,12 +1,7 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 
-import {
-  baseUrlFromEnv,
-  modelsUrl,
-  normalizeBaseUrl,
-  redactDiagnosticText,
-} from "../src/config.ts"
+import { baseUrlFromEnv, modelsUrl, normalizeBaseUrl, redactDiagnosticText } from "../src/config.ts"
 
 describe("normalizeBaseUrl", () => {
   it("trims surrounding whitespace and trailing slashes", () => {
