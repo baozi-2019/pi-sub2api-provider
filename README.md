@@ -6,7 +6,34 @@
 
 ## 安装
 
-项目本地或全局放进扩展目录，`package.json` 已声明 `"pi": { "extensions": ["./index.ts"] }`。核心包是 optional peerDependencies，运行时由宿主 pi 提供。
+用 pi 的包管理命令安装（git 源，主分支 `dev`）：
+
+```bash
+pi install git:github.com/baozi-2019/pi-sub2api-provider@dev
+```
+
+其它来源等价写法：
+
+```bash
+# SSH 源（按 ~/.ssh/config 自动选密钥）
+pi install git:git@github.com:baozi-2019/pi-sub2api-provider@dev
+# 本地源码路径
+pi install /absolute/path/to/pi-sub2api-provider
+# 仅本次运行试用，不写入配置
+pi -e git:github.com/baozi-2019/pi-sub2api-provider@dev
+```
+
+`package.json` 已声明 `"pi": { "extensions": ["./index.ts"] }`，安装后下次启动 pi 即自动加载。核心包是 optional peerDependencies，运行时由宿主 pi 提供，扩展侧无需安装。
+
+查看 / 卸载 / 更新：
+
+```bash
+pi list                                            # 查看已安装包
+pi remove git:github.com/baozi-2019/pi-sub2api-provider
+pi update --extensions                             # 更新扩展并核对锁定的 ref
+```
+
+> `@dev` 是当前主分支；正式发版打 tag 后建议把 ref 改成对应 tag（如 `@v0.1.0`）以固定版本。
 
 ## 使用
 
