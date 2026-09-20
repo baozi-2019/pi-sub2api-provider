@@ -33,7 +33,7 @@ export default function (pi: ExtensionAPI): void {
   let lastSuccess: number | undefined
   let lastError: string | undefined
 
-  function buildProvider(base: string) {
+  function buildProvider(base: string | undefined) {
     return createProvider({
       id: PROVIDER_ID,
       name: PROVIDER_NAME,
@@ -59,6 +59,7 @@ export default function (pi: ExtensionAPI): void {
         const key = ctx.credential?.type === "api_key" ? ctx.credential.key : undefined
         if (!key) return ctx.stored?.models ?? []
         if (!ctx.allowNetwork) return ctx.stored?.models ?? []
+        if (!base) return ctx.stored?.models ?? []
 
         const ids = await fetchSub2apiModelIds({ baseUrl: base, apiKey: key, signal: ctx.signal })
         if (ids.length === 0) {
@@ -95,7 +96,9 @@ export default function (pi: ExtensionAPI): void {
   }
 
   function registerCurrentProvider(): void {
-    if (baseUrl) pi.registerProvider(buildProvider(baseUrl))
+    // Always register (baseUrl may be unset) so `sub2api` shows up in /login and
+    // the API key can be entered before the URL is configured.
+    pi.registerProvider(buildProvider(baseUrl))
   }
 
   registerCurrentProvider()
