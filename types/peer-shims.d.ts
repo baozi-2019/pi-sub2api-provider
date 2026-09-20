@@ -95,10 +95,8 @@ declare module "@earendil-works/pi-ai" {
   }
 
   export function createProvider(input: CreateProviderOptions): Provider
-}
 
-declare module "@earendil-works/pi-ai/api/openai-completions.lazy" {
-  type ProviderStreams = import("@earendil-works/pi-ai").ProviderStreams
+  /** Runtime root alias (see AGENTS.md): openAICompletionsApi lives on the compat entrypoint. */
   export function openAICompletionsApi(): ProviderStreams
 }
 

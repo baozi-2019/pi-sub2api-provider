@@ -11,8 +11,7 @@
  * types/peer-shims.d.ts. src/ stays peer-free.
  */
 
-import { createProvider, type Sub2apiModel } from "@earendil-works/pi-ai"
-import { openAICompletionsApi } from "@earendil-works/pi-ai/api/openai-completions.lazy"
+import { createProvider, openAICompletionsApi, type Sub2apiModel } from "@earendil-works/pi-ai"
 import { getAgentDir, type ExtensionAPI } from "@earendil-works/pi-coding-agent"
 import { join } from "node:path"
 

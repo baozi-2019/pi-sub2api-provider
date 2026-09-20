@@ -7,7 +7,7 @@ obsidian-project: pi-sub2api-provider
 - 本工程是 pi 的 Sub2API provider 扩展：连接自托管 sub2api 实例，用户填 URL、`/login sub2api` 掩码录入 Key，自动拉取 `/v1/models` 并注册为 `sub2api` provider，提供 `/sub2api-refresh`、`/sub2api-status` 命令。
 - 运行时复用宿主 pi 打包的核心包 `@earendil-works/pi-ai` 与 `@earendil-works/pi-coding-agent`：只能以 optional peerDependencies 声明，禁止写入 `dependencies`/`devDependencies`（`tests/test-package-manifest.ts` 校验）。
 - 凡 import 这两个 peer 包的代码只允许出现在入口 `index.ts`（宿主加载期解析）；`types/peer-shims.d.ts` 用 ambient `declare module` 窄化 shim 出 `index.ts` 用到的 peer 导出，使 `index.ts` 也纳入 typecheck。`src/` 必须保持零 peer 依赖，只 import 相对模块与 `node:` 内建。
-- `openAICompletionsApi` 值**只能**从 `@earendil-works/pi-ai/api/openai-completions.lazy` 导入；官方文档 `custom-provider.md` 示例里的根包导入 `{ createProvider, openAICompletionsApi }` 是过时写法（根包只有 type，无该值导出）。
+- `openAICompletionsApi` 与 `createProvider` 都**从根包 `@earendil-works/pi-ai` 导入**（pi 运行时把扩展的根包 alias 到 compat 入口，二者均有值导出）；**禁止**导入 `@earendil-works/pi-ai/api/*` 子路径——运行时 jiti alias 只覆盖根路径、`/compat`、`/oauth`、`/providers/all`，子路径会报 Cannot find module。
 - Key 完全托管在 pi `~/.pi/agent/auth.json`（`/login sub2api` 写入），插件文件不存 Key；本插件只存 baseUrl（`~/.pi/agent/sub2api-config.json`）。
 - models.dev 快照缓存于 `~/.pi/agent/sub2api-models-dev.json`（TTL 24h，`/sub2api-refresh` 强制刷新）。
 
